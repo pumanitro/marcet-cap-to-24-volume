@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/top-1000-cryptos.js", "use": "@vercel/node" },
+    { "src": "pages/index.js", "use": "@vercel/next" }
+  ],
+  "routes": [
+    { "src": "/api/top-1000-cryptos", "dest": "/api/top-1000-cryptos.js" },
+    { "src": "/(.*)", "dest": "/pages/index.js" }
+  ]
+}

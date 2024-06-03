@@ -1,7 +1,6 @@
 const axios = require('axios');
-const fs = require('fs');
 
-const getTop1000Cryptocurrencies = async () => {
+module.exports = async (req, res) => {
     const url = 'https://api.coingecko.com/api/v3/coins/markets';
     const perPage = 250;
     const totalPages = 4; // 1000 / 250 = 4
@@ -22,7 +21,7 @@ const getTop1000Cryptocurrencies = async () => {
             allData.push(...data);
         } catch (error) {
             console.error(`Error on page ${page}: Unable to fetch data (status code ${error.response ? error.response.status : 'unknown'})`);
-            return;
+            return res.status(500).json({ error: 'Failed to fetch data' });
         }
     }
 
@@ -36,10 +35,5 @@ const getTop1000Cryptocurrencies = async () => {
         };
     });
 
-    // Save data to a JSON file
-    fs.writeFileSync('top_1000_cryptocurrencies.json', JSON.stringify(mappedData, null, 2));
-
-    console.log('Top 1000 cryptocurrencies data saved to top_1000_cryptocurrencies.json');
+    res.status(200).json(mappedData);
 };
-
-getTop1000Cryptocurrencies();
