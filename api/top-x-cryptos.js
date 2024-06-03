@@ -2,8 +2,9 @@ const axios = require('axios');
 
 module.exports = async (req, res) => {
     const url = 'https://api.coingecko.com/api/v3/coins/markets';
-    const perPage = 250;
-    const totalPages = 4; // 1000 / 250 = 4
+    const coins = parseInt(req.query.coins) || 1000; // Default to 1000 if not provided
+    const perPage = coins < 250 ? coins : 250; // Number of items per page
+    const totalPages = Math.ceil(coins / perPage);
     const allData = [];
 
     try {
@@ -27,9 +28,13 @@ module.exports = async (req, res) => {
             }
         }
 
-        // Map to get data: ticker, market cap, 24h volume, 24h volume/market cap
-        const mappedData = allData.map((coin) => {
+        // Slice the data to get only the requested number of coins
+        const slicedData = allData.slice(0, coins);
+
+        // Map to get data: ranking, ticker, market cap, 24h volume, 24h volume/market cap
+        const mappedData = slicedData.map((coin, index) => {
             return {
+                rank: index + 1,
                 ticker: coin.symbol.toUpperCase(),
                 marketCap: coin.market_cap,
                 volume: coin.total_volume,
